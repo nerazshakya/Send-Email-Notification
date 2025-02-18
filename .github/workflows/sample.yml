@@ -1,0 +1,27 @@
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Adaptive Card Email
+        uses: your-org/adaptive-card-email-action@main
+        with:
+          smtp_server: "smtp.office365.com"
+          smtp_username: "${{ secrets.SMTP_USERNAME }}"
+          smtp_password: "${{ secrets.SMTP_PASSWORD }}"
+          from_email: "your-email@example.com"
+          to_email: "recipient@example.com"
+          title: "Build Completed"
+          run_id: "5678"
+          commit: "def12345abcdef"
+          actor: "github-user"
+          current_time: "2025-02-18 12:00:00"
+          environ: "production"
+          app: "MyApp"
+          stage: "build"
+          event: "push"
+          branch: "main"
+          status: "success"
+          commit_message: "Initial commit"
+          repo_url: "https://github.com/your-org/your-repo"
+          build_url: "https://github.com/your-org/your-repo/actions/runs/5678"
+          commit_url: "https://github.com/your-org/your-repo/commit/def12345abcdef"

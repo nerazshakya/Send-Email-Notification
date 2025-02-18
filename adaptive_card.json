@@ -1,0 +1,67 @@
+{
+    "type": "message",
+    "attachments": [{
+        "contentType": "application/vnd.microsoft.card.adaptive",
+        "content": {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.6",
+            "body": [
+                {
+                    "type": "Container",
+                    "items": [
+                
+                {
+                    "type": "TextBlock",
+                    "size": "medium",
+                    "weight": "bolder",
+                    "text": f"{title}",
+                    "spacing": "none"
+                },
+                {
+                    "type": "TextBlock",
+                    "size": "small",
+                    "weight": "bolder",
+                    "text": f"RUN ID #{run_id} (Commit {commit})",
+                    "spacing": "none"
+                },
+                {
+                    "type": "TextBlock",
+                    "size": "small",
+                    "weight": "bolder",
+                    "text": f"By @{actor} on {current_time}",
+                    "spacing": "none"
+                },
+                {
+                    "type": "FactSet",
+                    "separator": True,
+                    "spacing": "Padding",
+                    "facts": [
+                        {"title": "Environment", "value": f"{environ.upper()}", },
+                        {"title": "Application", "value": f"{app.upper()}"},
+                        {"title": "Stage", "value": f"{stage.upper()}"},
+                        {"title": "Event Type", "value": f"{event.upper()}"},
+                        {"title": "Branch", "value": f"{branch}"},
+                        {"title": "Status", "value": f"{status.upper()}"},
+                        {"title": "Commit Message", "value": f"{commit_message}"}
+                    ]
+                }
+                    ]},
+                
+                {
+                    "type": "Container",
+                    "items": [
+                
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {"type": "Action.OpenUrl","title": "Repository","style": "positive","url": repo_url},
+                        {"type": "Action.OpenUrl","title": "Workflow Status","style": "positive","url": build_url},
+                        {"type": "Action.OpenUrl","title": "Review Diffs","style": "positive","url": commit_url}
+                    ]
+                }
+                    ]}
+            ]
+        }
+    }]
+}

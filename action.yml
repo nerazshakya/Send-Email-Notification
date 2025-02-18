@@ -1,0 +1,105 @@
+name: "Send Adaptive Card Email"
+description: "Sends an email with an Adaptive Card using SMTP authentication"
+inputs:
+  smtp_server:
+    description: "SMTP server address"
+    required: true
+  smtp_port:
+    description: "SMTP server port"
+    required: false
+    default: "587"
+  smtp_username:
+    description: "SMTP username (email)"
+    required: true
+  smtp_password:
+    description: "SMTP password"
+    required: true
+  from_email:
+    description: "Sender email address"
+    required: true
+  to_email:
+    description: "Recipient email address"
+    required: true
+  title:
+    description: "Notification title"
+    required: true
+  run_id:
+    description: "Run ID of the workflow"
+    required: true
+  commit:
+    description: "Commit ID"
+    required: true
+  actor:
+    description: "GitHub actor (username)"
+    required: true
+  current_time:
+    description: "Current time of the run"
+    required: true
+  environ:
+    description: "Deployment environment"
+    required: true
+  app:
+    description: "Application name"
+    required: true
+  stage:
+    description: "Stage of the workflow"
+    required: true
+  event:
+    description: "Event type (e.g., push, pull_request)"
+    required: true
+  branch:
+    description: "Branch name"
+    required: true
+  status:
+    description: "Workflow status"
+    required: true
+  commit_message:
+    description: "Commit message"
+    required: true
+  repo_url:
+    description: "Repository URL"
+    required: true
+  build_url:
+    description: "Workflow build URL"
+    required: true
+  commit_url:
+    description: "Commit URL"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install -r ${{ github.action_path }}/requirements.txt
+      shell: bash
+
+    - name: Run email script
+      run: python ${{ github.action_path }}/send_email.py
+      shell: bash
+      env:
+        SMTP_SERVER: ${{ inputs.smtp_server }}
+        SMTP_PORT: ${{ inputs.smtp_port }}
+        SMTP_USERNAME: ${{ inputs.smtp_username }}
+        SMTP_PASSWORD: ${{ inputs.smtp_password }}
+        FROM_EMAIL: ${{ inputs.from_email }}
+        TO_EMAIL: ${{ inputs.to_email }}
+        TITLE: ${{ inputs.title }}
+        RUN_ID: ${{ inputs.run_id }}
+        COMMIT: ${{ inputs.commit }}
+        ACTOR: ${{ inputs.actor }}
+        CURRENT_TIME: ${{ inputs.current_time }}
+        ENVIRON: ${{ inputs.environ }}
+        APP: ${{ inputs.app }}
+        STAGE: ${{ inputs.stage }}
+        EVENT: ${{ inputs.event }}
+        BRANCH: ${{ inputs.branch }}
+        STATUS: ${{ inputs.status }}
+        COMMIT_MESSAGE: ${{ inputs.commit_message }}
+        REPO_URL: ${{ inputs.repo_url }}
+        BUILD_URL: ${{ inputs.build_url }}
+        COMMIT_URL: ${{ inputs.commit_url }}

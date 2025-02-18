@@ -42,16 +42,16 @@ def send_email():
 
 
 # Get the absolute path of the script directory
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_dir, "adaptive_card_template.json")
+        #script_dir = os.path.dirname(os.path.abspath(__file__))
+        #file_path = os.path.join(script_dir, "adaptive_card.json")
 
             # Load Adaptive Card template
-        with open(file_path, "r") as file:
-            adaptive_card_template = file.read()
+        #with open(file_path, "r") as file:
+        #    adaptive_card = file.read()
 
         # Load Adaptive Card template from the repo
-        #with open("adaptive_card_template.json", "r") as file:
-        #    adaptive_card_template = file.read()
+        with open("adaptive_card_.json", "r") as file:
+            adaptive_card_template = file.read()
 
         # Replace placeholders with dynamic values
         adaptive_card_json = (

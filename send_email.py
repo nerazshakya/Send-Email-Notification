@@ -39,9 +39,19 @@ def send_email():
         commit_url = f"{github_url}/{repo}/commit/{commit}"
         build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
 
-        # Load Adaptive Card template from the repo
-        with open("adaptive_card_template.json", "r") as file:
+
+
+# Get the absolute path of the script directory
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(script_dir, "adaptive_card_template.json")
+
+            # Load Adaptive Card template
+        with open(file_path, "r") as file:
             adaptive_card_template = file.read()
+
+        # Load Adaptive Card template from the repo
+        #with open("adaptive_card_template.json", "r") as file:
+        #    adaptive_card_template = file.read()
 
         # Replace placeholders with dynamic values
         adaptive_card_json = (

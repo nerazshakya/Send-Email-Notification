@@ -50,7 +50,7 @@ def send_email():
         #    adaptive_card = file.read()
 
         # Load Adaptive Card template from the repo
-        with open("adaptive_card_.json", "r") as file:
+        with open("adaptive_card.json", "r") as file:
             adaptive_card_template = file.read()
 
         # Replace placeholders with dynamic values

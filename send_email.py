@@ -2,7 +2,6 @@ import smtplib
 import pytz
 import datetime
 import subprocess
-import json
 import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -23,8 +22,6 @@ def send_email():
         stage = os.getenv("STAGE", "build")
         event = os.getenv("EVENT", "push")
         branch = os.getenv("BRANCH", "main")
-      
- 
         status = os.getenv("STATUS", "success")
         commit_message = os.getenv("COMMIT_MESSAGE", "Initial commit")
         github_url = os.getenv('GITHUB_SERVER_URL','https://github.com')

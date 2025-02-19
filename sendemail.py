@@ -114,7 +114,6 @@ def send_email():
         FROM_EMAIL = os.getenv("FROM_EMAIL")
         TO_EMAIL = os.getenv("TO_EMAIL")
 
-        # Properly embed the Adaptive Card JSON for Outlook
         email_html = f"""
         <html>
         <head>
@@ -124,6 +123,10 @@ def send_email():
             <h3>Workflow Status Notification</h3>
             <p>Your CI/CD pipeline has completed successfully!</p>
             <p><b>Note:</b> This email contains an Adaptive Card. Please view it in Outlook.</p>
+            <p><b>Title:</b> {title}</p>
+            <p><b>Status:</b> {status}</p>
+            <p><b>Commit:</b> {commit} - {commit_message}</p>
+            <p><a href="{repo_url}">Repository</a> | <a href="{build_url}">Workflow Status</a> | <a href="{commit_url}">Review Diffs</a></p>
         </body>
         </html>
         """

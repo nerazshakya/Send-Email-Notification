@@ -9,32 +9,38 @@ local_timezone = datetime.datetime.now().astimezone().tzinfo
 
 # Format time for display
 current_time = datetime.datetime.now(local_timezone).strftime('%Y-%m-%d %H:%M:%S %Z')
+
+def get_commit_message():
+    try:
+        return subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode('utf-8').strip()
+    except subprocess.CalledProcessError:
+        return "No commit message available"
+
+def get_files_changed():
+    try:
+        return subprocess.check_output(['git', 'diff-tree', '--no-commit-id', '--name-only', '-r', 'HEAD']).decode('utf-8').strip().split("\n")
+    except subprocess.CalledProcessError:
+        return "No files changed"
+
 def send_email():
+    
     try:
         # Load input parameters from environment variables
-        title = os.getenv("TITLE", "Workflow Notification")
-        #run_id = os.getenv("RUN_ID", "1234")
-        #commit = os.getenv("COMMIT", "abcdef123456")
-        #actor = os.getenv("ACTOR", "github-user")
-        #current_time = os.getenv("CURRENT_TIME", "2025-02-18 12:00:00")
-        environ = os.getenv("ENVIRON", "production")
-        app = os.getenv("APP", "MyApp")
-        stage = os.getenv("STAGE", "build")
-        event = os.getenv("EVENT", "push")
-        branch = os.getenv("BRANCH", "main")
-        status = os.getenv("STATUS", "success")
-        commit_message = os.getenv("COMMIT_MESSAGE", "Initial commit")
-        github_url = os.getenv('GITHUB_SERVER_URL','https://github.com')
+        title = os.getenv("INPUT_TITLE", "Workflow Notification")
+        status = os.getenv('INPUT_STATUS', 'Unknown')   # Expected: Success, Failure, Skipped, etc.
         commit = os.getenv('GITHUB_SHA', 'Unknown')[:7]  # Short commit hash
         actor = os.getenv('GITHUB_ACTOR', 'Unknown User')
         event = os.getenv('GITHUB_EVENT_NAME', 'Unknown Event')
         repo = os.getenv('GITHUB_REPOSITORY', 'Unknown Repo')
         branch = os.getenv('GITHUB_REF_NAME', 'Unknown Branch')
-        #commit_message = os.getenv('GITHUB_COMMIT_MESSAGE', 'No commit message found')
-        commit_message = subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode('utf-8').strip()
+        commit_message = get_commit_message()
         run_id = os.getenv('GITHUB_RUN_ID', '')
+        files_changed = get_files_changed()
+        github_url = os.getenv('GITHUB_SERVER_URL','https://github.com')
+        environ = os.getenv('INPUT_ENVIRON')
+        stage = os.getenv('INPUT_STAGE')
+        app = os.getenv('INPUT_APP')
 
-        
         repo_url = f"{github_url}/{repo}/tree/{branch}"
         commit_url = f"{github_url}/{repo}/commit/{commit}"
         build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
@@ -75,7 +81,7 @@ def send_email():
 
         # Email configuration
         SMTP_SERVER = os.getenv("SMTP_SERVER")
-        SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+        SMTP_PORT = int(os.getenv("SMTP_PORT", 25))
         SMTP_USERNAME = os.getenv("SMTP_USERNAME")
         SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
         FROM_EMAIL = os.getenv("FROM_EMAIL")

@@ -1,6 +1,13 @@
 name: "Send Adaptive Card Email"
-description: "Sends an email with an Adaptive Card using SMTP authentication"
+description: 'Send GitHub Actions notifications to Email using SMTP authentication'
+author: 'nshakya'
+branding:
+  icon: 'message-square'
+  color: 'green'
 inputs:
+  github_token:
+    description: Github token
+    required: true
   smtp_server:
     description: "SMTP server address"
     required: true
@@ -20,51 +27,27 @@ inputs:
   to_email:
     description: "Recipient email address"
     required: true
+
   title:
-    description: "Notification title"
-    required: true
-  run_id:
-    description: "Run ID of the workflow"
-    required: true
-  commit:
-    description: "Commit ID"
-    required: true
-  actor:
-    description: "GitHub actor (username)"
-    required: true
-  current_time:
-    description: "Current time of the run"
-    required: true
-  environ:
-    description: "Deployment environment"
-    required: true
-  app:
-    description: "Application name"
-    required: true
-  stage:
-    description: "Stage of the workflow"
-    required: true
-  event:
-    description: "Event type (e.g., push, pull_request)"
-    required: true
-  branch:
-    description: "Branch name"
-    required: true
+    description: 'Notification Title'
+    required: false
+    default: 'GitHub Action Notification'
   status:
-    description: "Workflow status"
-    required: true
-  commit_message:
-    description: "Commit message"
-    required: true
-  repo_url:
-    description: "Repository URL"
-    required: true
-  build_url:
-    description: "Workflow build URL"
-    required: true
-  commit_url:
-    description: "Commit URL"
-    required: true
+    description: 'Status (Success, Failure, Skipped, Cancelled, Unknown)'
+    required: false
+    default: 'Unknown'
+  #files_changed:
+  # description: 'List of changed files'
+    #required: false
+  environ: 
+    description: 'Environment (e.g. dev, uat, prod)'
+    required: false
+  stage:
+    description: 'Stage (e.g. build, test, deploy)'
+    required: false
+  app:
+    description: 'Application Name (Your applcation name)'
+    required: false
 
 runs:
   using: "composite"
@@ -83,18 +66,11 @@ runs:
         SMTP_PASSWORD: ${{ inputs.smtp_password }}
         FROM_EMAIL: ${{ inputs.from_email }}
         TO_EMAIL: ${{ inputs.to_email }}
-        TITLE: ${{ inputs.title }}
-        RUN_ID: ${{ inputs.run_id }}
-        COMMIT: ${{ inputs.commit }}
-        ACTOR: ${{ inputs.actor }}
-        CURRENT_TIME: ${{ inputs.current_time }}
-        ENVIRON: ${{ inputs.environ }}
-        APP: ${{ inputs.app }}
-        STAGE: ${{ inputs.stage }}
-        EVENT: ${{ inputs.event }}
-        BRANCH: ${{ inputs.branch }}
-        STATUS: ${{ inputs.status }}
-        COMMIT_MESSAGE: ${{ inputs.commit_message }}
-        REPO_URL: ${{ inputs.repo_url }}
-        BUILD_URL: ${{ inputs.build_url }}
-        COMMIT_URL: ${{ inputs.commit_url }}
+
+        INPUT_GITHUB_TOKEN: ${{inputs.github_token}}
+        INPUT_TITLE: ${{ inputs.title }}
+        INPUT_STATUS: ${{ inputs.status }}
+        #INPUT_FILES_CHANGED: ${{ inputs.files_changed }}
+        INPUT_ENVIRON: ${{inputs.environ}}
+        INPUT_STAGE: ${{ inputs.stage }}
+        INPUT_APP: ${{inputs.app}}   

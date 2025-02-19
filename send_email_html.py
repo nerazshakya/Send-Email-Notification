@@ -121,411 +121,383 @@ def send_email():
         # Attach HTML content
     
         html_content = f"""<!doctype html>
-<html lang="en">
-  <head>
+    <html lang="en">
+    <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Simple Transactional Email</title>
     <style media="all" type="text/css">
-    /* -------------------------------------
-    GLOBAL RESETS
-------------------------------------- */
     
     body {
-      font-family: Helvetica, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      font-size: 16px;
-      line-height: 1.3;
-      -ms-text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
+        font-family: Helvetica, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: 16px;
+        line-height: 1.3;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
     }
     
     table {
-      border-collapse: separate;
-      mso-table-lspace: 0pt;
-      mso-table-rspace: 0pt;
-      width: 100%;
+        border-collapse: separate;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        width: 100%;
     }
     
     table td {
-      font-family: Helvetica, sans-serif;
-      font-size: 16px;
-      vertical-align: top;
+        font-family: Helvetica, sans-serif;
+        font-size: 16px;
+        vertical-align: top;
     }
-    /* -------------------------------------
-    BODY & CONTAINER
-------------------------------------- */
+
     
     body {
-      background-color: #f4f5f6;
-      margin: 0;
-      padding: 0;
+        background-color: #f4f5f6;
+        margin: 0;
+        padding: 0;
     }
     
     .body {
-      background-color: #f4f5f6;
-      width: 100%;
+        background-color: #f4f5f6;
+        width: 100%;
     }
     
     .container {
-      margin: 0 auto !important;
-      max-width: 600px;
-      padding: 0;
-      padding-top: 24px;
-      width: 600px;
+        margin: 0 auto !important;
+        max-width: 600px;
+        padding: 0;
+        padding-top: 24px;
+        width: 600px;
     }
     
     .content {
-      box-sizing: border-box;
-      display: block;
-      margin: 0 auto;
-      max-width: 600px;
-      padding: 0;
+        box-sizing: border-box;
+        display: block;
+        margin: 0 auto;
+        max-width: 600px;
+        padding: 0;
     }
-    /* -------------------------------------
-    HEADER, FOOTER, MAIN
-------------------------------------- */
-    
+
     .main {
-      background: #ffffff;
-      border: 1px solid #eaebed;
-      border-radius: 16px;
-      width: 100%;
+        background: #ffffff;
+        border: 1px solid #eaebed;
+        border-radius: 16px;
+        width: 100%;
     }
     
     .wrapper {
-      box-sizing: border-box;
-      padding: 24px;
+        box-sizing: border-box;
+        padding: 24px;
     }
     
     .footer {
-      clear: both;
-      padding-top: 24px;
-      text-align: center;
-      width: 100%;
+        clear: both;
+        padding-top: 24px;
+        text-align: center;
+        width: 100%;
     }
     
     .footer td,
     .footer p,
     .footer span,
     .footer a {
-      color: #9a9ea6;
-      font-size: 16px;
-      text-align: center;
+        color: #9a9ea6;
+        font-size: 16px;
+        text-align: center;
     }
-    /* -------------------------------------
-    TYPOGRAPHY
-------------------------------------- */
     
     p {
-      font-family: Helvetica, sans-serif;
-      font-size: 16px;
-      font-weight: normal;
-      margin: 0;
-      margin-bottom: 16px;
+        font-family: Helvetica, sans-serif;
+        font-size: 16px;
+        font-weight: normal;
+        margin: 0;
+        margin-bottom: 16px;
     }
     
     a {
-      color: #0867ec;
-      text-decoration: underline;
+        color: #0867ec;
+        text-decoration: underline;
     }
-    /* -------------------------------------
-    BUTTONS
-------------------------------------- */
     
     .btn {
-      box-sizing: border-box;
-      min-width: 100% !important;
-      width: 100%;
+        box-sizing: border-box;
+        min-width: 100% !important;
+        width: 100%;
     }
     
     .btn > tbody > tr > td {
-      padding-bottom: 16px;
+        padding-bottom: 16px;
     }
     
     .btn table {
-      width: auto;
+        width: auto;
     }
     
     .btn table td {
-      background-color: #ffffff;
-      border-radius: 4px;
-      text-align: center;
+        background-color: #ffffff;
+        border-radius: 4px;
+        text-align: center;
     }
     
     .btn a {
-      background-color: #ffffff;
-      border: solid 2px #0867ec;
-      border-radius: 4px;
-      box-sizing: border-box;
-      color: #0867ec;
-      cursor: pointer;
-      display: inline-block;
-      font-size: 16px;
-      font-weight: bold;
-      margin: 0;
-      padding: 12px 24px;
-      text-decoration: none;
-      text-transform: capitalize;
+        background-color: #ffffff;
+        border: solid 2px #0867ec;
+        border-radius: 4px;
+        box-sizing: border-box;
+        color: #0867ec;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0;
+        padding: 12px 24px;
+        text-decoration: none;
+        text-transform: capitalize;
     }
     
     .btn-primary table td {
-      background-color: #0867ec;
+        background-color: #0867ec;
     }
     
     .btn-primary a {
-      background-color: #0867ec;
-      border-color: #0867ec;
-      color: #ffffff;
+        background-color: #0867ec;
+        border-color: #0867ec;
+        color: #ffffff;
     }
     
     @media all {
-      .btn-primary table td:hover {
+    .btn-primary table td:hover {
         background-color: #04953e !important;
-      }
-      .btn-primary a:hover {
+    }
+    .btn-primary a:hover {
         background-color: #04953e !important;
         border-color: #04953e !important;
-      }
     }
-    
-    /* -------------------------------------
-    OTHER STYLES THAT MIGHT BE USEFUL
-------------------------------------- */
-    
+    }
+        
     .last {
-      margin-bottom: 0;
+        margin-bottom: 0;
     }
     
     .first {
-      margin-top: 0;
+        margin-top: 0;
     }
     
     .align-center {
-      text-align: center;
+        text-align: center;
     }
     
     .align-right {
-      text-align: right;
+        text-align: right;
     }
     
     .align-left {
-      text-align: left;
+        text-align: left;
     }
     
     .text-link {
-      color: #0867ec !important;
-      text-decoration: underline !important;
+        color: #0867ec !important;
+        text-decoration: underline !important;
     }
     
     .clear {
-      clear: both;
+        clear: both;
     }
     
     .mt0 {
-      margin-top: 0;
+        margin-top: 0;
     }
     
     .mb0 {
-      margin-bottom: 0;
+        margin-bottom: 0;
     }
     
     .preheader {
-      color: transparent;
-      display: none;
-      height: 0;
-      max-height: 0;
-      max-width: 0;
-      opacity: 0;
-      overflow: hidden;
-      mso-hide: all;
-      visibility: hidden;
-      width: 0;
+        color: transparent;
+        display: none;
+        height: 0;
+        max-height: 0;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        mso-hide: all;
+        visibility: hidden;
+        width: 0;
     }
     
     .powered-by a {
-      text-decoration: none;
+        text-decoration: none;
     }
     
-    /* -------------------------------------
-    RESPONSIVE AND MOBILE FRIENDLY STYLES
-------------------------------------- */
-    
     @media only screen and (max-width: 640px) {
-      .main p,
-      .main td,
-      .main span {
+        .main p,
+        .main td,
+        .main span {
         font-size: 16px !important;
-      }
-      .wrapper {
+        }
+        .wrapper {
         padding: 8px !important;
-      }
-      .content {
+        }
+        .content {
         padding: 0 !important;
-      }
-      .container {
+        }
+    .container {
         padding: 0 !important;
         padding-top: 8px !important;
         width: 100% !important;
-      }
-      .main {
+        }
+        .main {
         border-left-width: 0 !important;
         border-radius: 0 !important;
         border-right-width: 0 !important;
-      }
-      .btn table {
+        }
+    .btn table {
         max-width: 100% !important;
         width: 100% !important;
-      }
-      .btn a {
+        }
+    .btn a {
         font-size: 16px !important;
         max-width: 100% !important;
         width: 100% !important;
+        }
 
-      }
-
-      td {
+    td {
         padding: 0 10px 0 0;
-      }
+        }
     }
-    /* -------------------------------------
-    PRESERVE THESE STYLES IN THE HEAD
-------------------------------------- */
     
     @media all {
-      .ExternalClass {
+    .ExternalClass {
         width: 100%;
-      }
-      .ExternalClass,
-      .ExternalClass p,
-      .ExternalClass span,
-      .ExternalClass font,
-      .ExternalClass td,
-      .ExternalClass div {
+        }
+    .ExternalClass,
+    .ExternalClass p,
+    .ExternalClass span,
+    .ExternalClass font,
+    .ExternalClass td,
+    .ExternalClass div {
         line-height: 100%;
-      }
-      .apple-link a {
+        }
+    .apple-link a {
         color: inherit !important;
         font-family: inherit !important;
         font-size: inherit !important;
         font-weight: inherit !important;
         line-height: inherit !important;
         text-decoration: none !important;
-      }
-      #MessageViewBody a {
+        }
+    #MessageViewBody a {
         color: inherit;
         text-decoration: none;
         font-size: inherit;
         font-family: inherit;
         font-weight: inherit;
         line-height: inherit;
-      }
+        }
     }
     </style>
-  </head>
-  <body>
+    </head>
+    <body>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
-      <tr>
+    <tr>
         <!--<td>&nbsp;</td> -->
         <td class="container">
-          <div class="content">
+        <div class="content">
 
             <!-- START CENTERED WHITE CONTAINER -->
             <span class="preheader">Preview</span>
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="main">
 
-              <!-- START MAIN CONTENT AREA -->
-              <tr>
+            <!-- START MAIN CONTENT AREA -->
+            <tr>
                 <td class="wrapper">
-                  <p><b>GitHub Notifications</b></p>
-                  <p>"Daimler-Truck-Financial-Service {title} ".</p>
-                  <p>"RUN ID #{run_id} (Commit {commit})".</p>
-                  <p>"By @{actor} on {current_time}".</p>
-                  <p>
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="">
-                    <tbody>
-                      <tr>
+                <p><b>GitHub Notifications</b></p>
+                <p>"Daimler-Truck-Financial-Service {title} ".</p>
+                <p>"RUN ID #{run_id} (Commit {commit})".</p>
+                <p>"By @{actor} on {current_time}".</p>
+                <p>
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="">
+                <tbody>
+                    <tr>
                         <td align="left">
-                          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tbody>
-                              <tr >
+                            <tr >
                                 <td>Environment:</td>
                                 <td>{environ.upper()}</td>
-                              </tr>
-                              <tr>
+                            </tr>
+                            <tr>
                                 <td>Application:</td>
                                 <td>{app.upper()}</td>
-                              </tr>
-                              <tr>
+                            </tr>
+                            <tr>
                                 <td>Stage:</td>
                                 <td>{stage.upper()}</td>
-                              </tr>
-                              <tr>
+                            </tr>
+                            <tr>
                                 <td>Event Type:</td>
                                 <td>{event.upper()}</td>
-                              </tr>
-                              <tr>
+                            </tr>
+                            <tr>
                                 <td>Branch:</td>
                                 <td>{branch}</td>
-                              </tr>
-                              <tr>
+                            </tr>
+                            <tr>
                                 <td>Status:</td>
                                 <td>{status.upper()}</td>
-                              </tr>
-                              <tr >
+                            </tr>
+                            <tr >
                                 <td style="white-space:nowrap">Commit Message:</td>
                                 <td>{commit_message}</td>
-                              </tr>
+                            </tr>
                             </tbody>
-                          </table>
+                        </table>
                         </td>
                     </tbody>
-                  </table>
+                </table>
                 </p>
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                     <tbody>
-                      <tr>
+                    <tr>
                         <td align="left">
-                          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tbody>
-                              <tr>
+                            <tr>
                                 <td> <a href="http://htmlemail.io" target="_blank">Repository</a> </td>
-                              </tr>
+                            </tr>
                             </tbody>
-                          </table>
+                        </table>
                         </td>
                         <td align="center">
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                              <tbody>
+                            <tbody>
                                 <tr>
-                                  <td> <a href="http://htmlemail.io" target="_blank">Workflow Status</a> </td>
+                                <td> <a href="http://htmlemail.io" target="_blank">Workflow Status</a> </td>
                                 </tr>
-                              </tbody>
+                            </tbody>
                             </table>
-                          </td>
-                          <td align="right">
+                        </td>
+                        <td align="right">
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                              <tbody>
+                            <tbody>
                                 <tr>
-                                  <td> <a href="http://htmlemail.io" target="_blank">Reveiw Diffs</a> </td>
+                                <td> <a href="http://htmlemail.io" target="_blank">Reveiw Diffs</a> </td>
                                 </tr>
-                              </tbody>
+                            </tbody>
                             </table>
-                          </td>
-                      </tr>
+                        </td>
+                    </tr>
                     </tbody>
-                  </table>
+                </table>
                 </td>
-              </tr>
-
-              <!-- END MAIN CONTENT AREA -->
-              </table>
+            </tr>
+            </table>
 
         <!--<td>&nbsp;</td> -->
-      </tr>
+    </tr>
     </table>
-  </body>
-</html>"""    
+    </body>
+    </html>"""    
             
         msg.attach(MIMEText(html_content, "html"))      
 

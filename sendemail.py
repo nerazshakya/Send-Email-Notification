@@ -1,147 +1,158 @@
 import smtplib
 import os
-import json
+import datetime
+import subprocess
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime
 
-class AdaptiveCardEmailSender:
-    def __init__(self):
-        # Initialize email configuration from environment variables
-        self.smtp_server = os.getenv("SMTP_SERVER")
-        self.smtp_port = int(os.getenv("SMTP_PORT", 25))
-        self.smtp_username = os.getenv("SMTP_USERNAME")
-        self.smtp_password = os.getenv("SMTP_PASSWORD")
-        self.from_email = os.getenv("FROM_EMAIL")
-        self.to_email = os.getenv("TO_EMAIL")
-        
-        # Get the directory where the script is located
-        self.script_dir = os.path.dirname(os.path.abspath(__file__))
-        
-    def load_adaptive_card_template(self):
-        """
-        Loads the adaptive card template from the JSON file.
-        The file should be in the same directory as the script.
-        """
-        try:
-            # Construct the full path to the adaptive_card.json file
-            template_path = os.path.join(self.script_dir, "adaptive_card.json")
-            
-            # Read and return the template content
-            with open(template_path, "r") as file:
-                return file.read()
-        except FileNotFoundError:
-            print("❌ Error: adaptive_card.json template file not found")
-            raise
-        except json.JSONDecodeError:
-            print("❌ Error: Invalid JSON in adaptive_card.json template")
-            raise
+# Get local time
+local_timezone = datetime.datetime.now().astimezone().tzinfo
+current_time = datetime.datetime.now(local_timezone).strftime('%Y-%m-%d %H:%M:%S %Z')
 
-    def replace_template_placeholders(self, template, workflow_data):
-        """
-        Replaces all placeholders in the template with actual workflow data.
-        """
-        replacements = {
-            "{TITLE}": workflow_data.get("title", "Workflow Notification"),
-            "{STATUS}": workflow_data.get("status", "Unknown"),
-            "{ENVIRON}": workflow_data.get("environ", ""),
-            "{APP}": workflow_data.get("app", ""),
-            "{STAGE}": workflow_data.get("stage", ""),
-            "{COMMIT}": workflow_data.get("commit", ""),
-            "{ACTOR}": workflow_data.get("actor", ""),
-            "{BRANCH}": workflow_data.get("branch", ""),
-            "{CURRENT_TIME}": workflow_data.get("current_time", datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
-            "{COMMIT_MESSAGE}": workflow_data.get("commit_message", "No commit message available"),
-            "{REPO_URL}": workflow_data.get("repo_url", "#"),
-            "{BUILD_URL}": workflow_data.get("build_url", "#"),
-            "{COMMIT_URL}": workflow_data.get("commit_url", "#"),
-            "{RUN_ID}": workflow_data.get("run_id", "")
-        }
-        
-        result = template
-        for placeholder, value in replacements.items():
-            result = result.replace(placeholder, str(value))
-        return result
+def get_commit_message():
+    try:
+        return subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode('utf-8').strip()
+    except subprocess.CalledProcessError:
+        return "No commit message available"
 
-    def create_email_content(self, adaptive_card_json):
+def send_email():
+    try:
+        # Load input parameters from environment variables
+        title = os.getenv("INPUT_TITLE", "Workflow Notification")
+        status = os.getenv("INPUT_STATUS", "Unknown")
+        commit = os.getenv("GITHUB_SHA", "Unknown")[:7]  # Short commit hash
+        actor = os.getenv("GITHUB_ACTOR", "Unknown User")
+        event = os.getenv("GITHUB_EVENT_NAME", "Unknown Event")
+        repo = os.getenv("GITHUB_REPOSITORY", "Unknown Repo")
+        branch = os.getenv("GITHUB_REF_NAME", "Unknown Branch")
+        commit_message = get_commit_message()
+        run_id = os.getenv("GITHUB_RUN_ID", "Unknown Run ID")
+        github_url = os.getenv("GITHUB_SERVER_URL", "https://github.com")
+        environ = os.getenv("INPUT_ENVIRON", "N/A")
+        stage = os.getenv("INPUT_STAGE", "N/A")
+        app = os.getenv("INPUT_APP", "N/A")
+
+        repo_url = f"{github_url}/{repo}/tree/{branch}"
+        commit_url = f"{github_url}/{repo}/commit/{commit}"
+        build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
+
+        # Adaptive Card JSON directly in Python
+        adaptive_card_json = f"""
+        {{
+            "type": "message",
+            "attachments": [{{
+                "contentType": "application/vnd.microsoft.card.adaptive",
+                "content": {{
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.6",
+                    "body": [
+                        {{
+                            "type": "Container",
+                            "items": [
+                                {{
+                                    "type": "TextBlock",
+                                    "size": "medium",
+                                    "weight": "bolder",
+                                    "text": "{title}",
+                                    "spacing": "none"
+                                }},
+                                {{
+                                    "type": "TextBlock",
+                                    "size": "small",
+                                    "weight": "bolder",
+                                    "text": "RUN ID #{run_id} (Commit {commit})",
+                                    "spacing": "none"
+                                }},
+                                {{
+                                    "type": "TextBlock",
+                                    "size": "small",
+                                    "weight": "bolder",
+                                    "text": "By @{actor} on {current_time}",
+                                    "spacing": "none"
+                                }},
+                                {{
+                                    "type": "FactSet",
+                                    "separator": true,
+                                    "spacing": "Padding",
+                                    "facts": [
+                                        {{"title": "Environment", "value": "{environ.upper()}"}},
+                                        {{"title": "Application", "value": "{app.upper()}"}},
+                                        {{"title": "Stage", "value": "{stage.upper()}"}},
+                                        {{"title": "Event Type", "value": "{event.upper()}"}},
+                                        {{"title": "Branch", "value": "{branch}"}},
+                                        {{"title": "Status", "value": "{status.upper()}"}},
+                                        {{"title": "Commit Message", "value": "{commit_message}"}}
+                                    ]
+                                }}
+                            ]
+                        }},
+                        {{
+                            "type": "Container",
+                            "items": [
+                                {{
+                                    "type": "ActionSet",
+                                    "actions": [
+                                        {{"type": "Action.OpenUrl", "title": "Repository", "style": "positive", "url": "{repo_url}"}},
+                                        {{"type": "Action.OpenUrl", "title": "Workflow Status", "style": "positive", "url": "{build_url}"}},
+                                        {{"type": "Action.OpenUrl", "title": "Review Diffs", "style": "positive", "url": "{commit_url}"}}
+                                    ]
+                                }}
+                            ]
+                        }}
+                    ]
+                }}
+            }}]
+        }}
         """
-        Creates the HTML email content with the embedded adaptive card.
-        """
-        return f"""
+
+        # Email configuration
+        SMTP_SERVER = os.getenv("SMTP_SERVER")
+        SMTP_PORT = int(os.getenv("SMTP_PORT", 25))
+        SMTP_USERNAME = os.getenv("SMTP_USERNAME")
+        SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+        FROM_EMAIL = os.getenv("FROM_EMAIL")
+        TO_EMAIL = os.getenv("TO_EMAIL")
+
+        # Properly embed the Adaptive Card JSON for Outlook
+        email_html = f"""
         <html>
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-            <script type="application/adaptivecard+json">
-            {adaptive_card_json}
-            </script>
         </head>
         <body>
             <h3>Workflow Status Notification</h3>
-            <p>Your CI/CD pipeline has completed. Please check the status below.</p>
+            <p>Your CI/CD pipeline has completed successfully!</p>
             <p><b>Note:</b> This email contains an Adaptive Card. Please view it in Outlook.</p>
         </body>
         </html>
         """
 
-    def send_email(self, workflow_data):
-        """
-        Sends an email with the adaptive card containing workflow information.
-        """
-        try:
-            # Load and process the adaptive card template
-            template = self.load_adaptive_card_template()
-            adaptive_card_json = self.replace_template_placeholders(template, workflow_data)
-            
-            # Validate the resulting JSON
-            try:
-                json.loads(adaptive_card_json)
-            except json.JSONDecodeError:
-                print("❌ Error: Template replacement resulted in invalid JSON")
-                raise
+        # Create email message
+        msg = MIMEMultipart("alternative")
+        msg["From"] = FROM_EMAIL
+        msg["To"] = TO_EMAIL
+        msg["Subject"] = f"Workflow Status Notification: {status}"
 
-            # Create email content
-            email_html = self.create_email_content(adaptive_card_json)
+        # Attach HTML content
+        msg.attach(MIMEText(email_html, "html"))
 
-            # Create email message
-            msg = MIMEMultipart()
-            msg["From"] = self.from_email
-            msg["To"] = self.to_email
-            msg["Subject"] = workflow_data.get("title", "Workflow Status Notification")
-            msg.attach(MIMEText(email_html, "html"))
+        # Attach Adaptive Card as a separate MIME part for Outlook
+        adaptive_card_part = MIMEText(adaptive_card_json, "json")
+        adaptive_card_part.add_header("Content-Disposition", "attachment", filename="adaptive_card.json")
+        msg.attach(adaptive_card_part)
 
-            # Send email
-            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                server.starttls()
-                server.login(self.smtp_username, self.smtp_password)
-                server.sendmail(self.from_email, self.to_email, msg.as_string())
-            
-            print("✅ Email with Adaptive Card sent successfully!")
-            return True
-            
-        except Exception as e:
-            print(f"❌ Error sending email: {e}")
-            return False
+        # Send email via SMTP
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
+            server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
 
-# Example usage
-if __name__ == "__main__":
-    # Collect workflow data from environment variables
-    workflow_data = {
-        "title": os.getenv("INPUT_TITLE", "Workflow Notification"),
-        "status": os.getenv("INPUT_STATUS", "Unknown"),
-        "environ": os.getenv("INPUT_ENVIRON", ""),
-        "app": os.getenv("INPUT_APP", ""),
-        "stage": os.getenv("INPUT_STAGE", ""),
-        "commit": os.getenv("GITHUB_SHA", "")[:7],
-        "actor": os.getenv("GITHUB_ACTOR", ""),
-        "branch": os.getenv("GITHUB_REF_NAME", ""),
-        "current_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        "commit_message": os.getenv("COMMIT_MESSAGE", "No commit message available"),
-        "repo_url": os.getenv("REPO_URL", "#"),
-        "build_url": os.getenv("BUILD_URL", "#"),
-        "commit_url": os.getenv("COMMIT_URL", "#"),
-        "run_id": os.getenv("GITHUB_RUN_ID", "")
-    }
+        print("✅ Email with Adaptive Card sent successfully!")
     
-    # Send the email
-    sender = AdaptiveCardEmailSender()
-    sender.send_email(workflow_data)
+    except Exception as e:
+        print(f"❌ Error sending email: {e}")
+        exit(1)
+
+if __name__ == "__main__":
+    send_email()

@@ -39,7 +39,7 @@ def send_email():
 
         # Adaptive Card JSON directly in Python
         adaptive_card_json = f"""
-        {
+        {{
                     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
                     "version": "1.4",
@@ -98,7 +98,7 @@ def send_email():
                             ]
                         }}
                     ]
-                }
+                }}
         """
 
         # Email configuration

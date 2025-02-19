@@ -37,69 +37,8 @@ def send_email():
         commit_url = f"{github_url}/{repo}/commit/{commit}"
         build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
 
-        # Adaptive Card JSON directly in Python
-        adaptive_card_json = f"""
-        {{
-                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                    "type": "AdaptiveCard",
-                    "version": "1.4",
-                    "body": [
-                        {{
-                            "type": "Container",
-                            "items": [
-                                {{
-                                    "type": "TextBlock",
-                                    "size": "medium",
-                                    "weight": "bolder",
-                                    "text": "{title}",
-                                    "spacing": "none"
-                                }},
-                                {{
-                                    "type": "TextBlock",
-                                    "size": "small",
-                                    "weight": "bolder",
-                                    "text": "RUN ID #{run_id} (Commit {commit})",
-                                    "spacing": "none"
-                                }},
-                                {{
-                                    "type": "TextBlock",
-                                    "size": "small",
-                                    "weight": "bolder",
-                                    "text": "By @{actor} on {current_time}",
-                                    "spacing": "none"
-                                }},
-                                {{
-                                    "type": "FactSet",
-                                    "separator": True,
-                                    "spacing": "Padding",
-                                    "facts": [
-                                        {{"title": "Environment", "value": "{environ.upper()}"}},
-                                        {{"title": "Application", "value": "{app.upper()}"}},
-                                        {{"title": "Stage", "value": "{stage.upper()}"}},
-                                        {{"title": "Event Type", "value": "{event.upper()}"}},
-                                        {{"title": "Branch", "value": "{branch}"}},
-                                        {{"title": "Status", "value": "{status.upper()}"}},
-                                        {{"title": "Commit Message", "value": "{commit_message}"}}
-                                    ]
-                                }}
-                            ]
-                        }},
-                        {{
-                            "type": "Container",
-                            "items": [
-                                {{
-                                    "type": "ActionSet",
-                                    "actions": [
-                                        {{"type": "Action.OpenUrl", "title": "Repository", "style": "positive", "url": "{repo_url}"}},
-                                        {{"type": "Action.OpenUrl", "title": "Workflow Status", "style": "positive", "url": "{build_url}"}},
-                                        {{"type": "Action.OpenUrl", "title": "Review Diffs", "style": "positive", "url": "{commit_url}"}}
-                                    ]
-                                }}
-                            ]
-                        }}
-                    ]
-                }}
-        """
+
+        
 
         # Email configuration
         SMTP_SERVER = os.getenv("SMTP_SERVER")
@@ -109,17 +48,11 @@ def send_email():
         FROM_EMAIL = os.getenv("FROM_EMAIL")
         TO_EMAIL = os.getenv("TO_EMAIL")
 
-        email_html = f"""
-        <html>
-        <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        </head>
-        <body>
-        <script type=\"application/adaptivecard+json\">
+        adaptive_card_json = f"""
+        <script type="application/adaptivecard+json">
         {{
-                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
-                    "version": "1.0",
+                    "version": "1.4",
                     "body": [
                         {{
                             "type": "Container",
@@ -177,39 +110,37 @@ def send_email():
                     ]
                 }}
             </script>
-            <!-- Fallback for other email clients -->
-            <p><b>For clients that do not support Adaptive Cards, here is the basic information:</b></p>
-            <ul>
-                <li><b>Title:</b> {title}</li>
-                <li><b>Status:</b> {status}</li>
-                <li><b>Commit:</b> {commit}</li>
-                <li><b>Branch:</b> {branch}</li>
-                </ul>
-            <p><a href="{repo_url}">Repository</a> | <a href="{build_url}">Workflow Status</a> | <a href="{commit_url}">Review Diffs</a></p>
-        
-        </body>
-        </html>
         """
-
-        # Create email message
+            # Create email message
         msg = MIMEMultipart("alternative")
         msg["From"] = FROM_EMAIL
         msg["To"] = TO_EMAIL
         msg["Subject"] = f"Workflow Status Notification: {status}"
 
         # Attach HTML content
-        msg.attach(MIMEText(email_html, "html"))
+    
+        html_content = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        </head>
+        <body>
+        <h2>🚨 Build {status}: {repo}</h2>
+        <p>The latest CI/CD pipeline execution for {repo} has {status.lower()}. Click below to view logs.</p>
+        {adaptive_card_json}
+        </body>
+        </html>"""    
+            
+        msg.attach(MIMEText(html_content, "html"))      
 
-        # Attach Adaptive Card as a separate MIME part for Outlook
-        adaptive_card_part = MIMEText(adaptive_card_json, "json")
-        adaptive_card_part.add_header("Content-Disposition", "attachment", filename="adaptive_card.json")
-        msg.attach(adaptive_card_part)
+
 
         # Send email via SMTP
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(SMTP_USERNAME, SMTP_PASSWORD)
             server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
+            server.quit()
 
         print("✅ Email with Adaptive Card sent successfully!")
     

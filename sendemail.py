@@ -1,6 +1,7 @@
 import smtplib
 import os
 import datetime
+import pytz
 import subprocess
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -69,7 +70,7 @@ def send_email():
                                 }},
                                 {{
                                     "type": "FactSet",
-                                    "separator": true,
+                                    "separator": True,
                                     "spacing": "Padding",
                                     "facts": [
                                         {{"title": "Environment", "value": "{environ.upper()}"}},

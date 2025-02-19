@@ -39,7 +39,7 @@ def send_email():
 
         # Adaptive Card JSON directly in Python
         adaptive_card_json = f"""
-        {{
+        {
                     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
                     "version": "1.4",
@@ -98,7 +98,7 @@ def send_email():
                             ]
                         }}
                     ]
-                }}
+                }
         """
 
         # Email configuration
@@ -115,11 +115,11 @@ def send_email():
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         </head>
         <body>
-        <script type="application/vnd.microsoft.card.adaptive">
+        <script type=\"application/adaptivecard+json\">
         {{
                     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
-                    "version": "1.4",
+                    "version": "1.0",
                     "body": [
                         {{
                             "type": "Container",
@@ -176,7 +176,6 @@ def send_email():
                         }}
                     ]
                 }}
-        </script>
             <!-- Fallback for other email clients -->
             <p><b>For clients that do not support Adaptive Cards, here is the basic information:</b></p>
             <ul>
@@ -186,28 +185,25 @@ def send_email():
                 <li><b>Branch:</b> {branch}</li>
                 </ul>
             <p><a href="{repo_url}">Repository</a> | <a href="{build_url}">Workflow Status</a> | <a href="{commit_url}">Review Diffs</a></p>
+        </script>
         </body>
         </html>
         """
 
-# Create email message
-        msg = MIMEMultipart("mixed")
-        msg["From"] = os.getenv("FROM_EMAIL")
-        msg["To"] = os.getenv("TO_EMAIL")
+        # Create email message
+        msg = MIMEMultipart("alternative")
+        msg["From"] = FROM_EMAIL
+        msg["To"] = TO_EMAIL
         msg["Subject"] = f"Workflow Status Notification: {status}"
 
-        # Attach HTML content (fallback)
+        # Attach HTML content
         msg.attach(MIMEText(email_html, "html"))
 
-        # Attach Adaptive Card JSON as a separate MIME part for Outlook
+        # Attach Adaptive Card as a separate MIME part for Outlook
         adaptive_card_part = MIMEText(adaptive_card_json, "json")
         adaptive_card_part.add_header("Content-Disposition", "attachment", filename="adaptive_card.json")
-
-        # Add the Actionable Message header for Outlook
-        msg.add_header('X-Message-Flags', 'ActionableMessage')
-        msg.add_header('X-Actionable-Message-Type', 'AdaptiveCard')
-        
         msg.attach(adaptive_card_part)
+
         # Send email via SMTP
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()

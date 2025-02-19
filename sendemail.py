@@ -115,6 +115,7 @@ def send_email():
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         </head>
         <body>
+        <script type="application/vnd.microsoft.card.adaptive">
         {{
                     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
@@ -175,6 +176,7 @@ def send_email():
                         }}
                     ]
                 }}
+        </script>
             <!-- Fallback for other email clients -->
             <p><b>For clients that do not support Adaptive Cards, here is the basic information:</b></p>
             <ul>

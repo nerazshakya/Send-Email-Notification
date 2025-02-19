@@ -114,6 +114,7 @@ def send_email():
         """
 
         with open("email_template.html", "r", encoding="utf-8") as file:
+                   
             html_content = file.read()
 
         # Read CSS file
@@ -135,7 +136,7 @@ def send_email():
     
     
             
-        msg.attach(MIMEText(html_content, "html"))      
+        msg.attach(MIMEText(final_html, "html"))      
 
 
 

@@ -51,6 +51,7 @@ def send_email():
         adaptive_card_json = f"""
         <script type="application/adaptivecard+json">
         {{
+                    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
                     "version": "1.4",
                     "body": [

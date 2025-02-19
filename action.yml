@@ -57,7 +57,7 @@ runs:
       shell: bash
 
     - name: Run email script
-      run: python ${{ github.action_path }}/sendemail.py
+      run: python ${{ github.action_path }}/send_email.py
       shell: bash
       env:
         SMTP_SERVER: ${{ inputs.smtp_server }}

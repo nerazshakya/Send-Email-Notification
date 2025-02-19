@@ -125,7 +125,7 @@ def send_email():
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         </head>
         <body>
-        <h2>🚨 Build {status}: {repo}</h2>
+        <h3> Build {status}: {repo}</h3>
         <p>The latest CI/CD pipeline execution for {repo} has {status.lower()}. Click below to view logs.</p>
         {adaptive_card_json}
         </body>

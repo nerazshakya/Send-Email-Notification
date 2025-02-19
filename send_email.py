@@ -92,7 +92,6 @@ def send_email():
         {adaptive_card_json}
         </script>
         """
-
         email_html = f"""
         <html>
         <head>

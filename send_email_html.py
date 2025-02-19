@@ -112,13 +112,16 @@ def send_email():
                 }}
             </script>
         """
-
-        with open("email_template.html", "r", encoding="utf-8") as file:
+        
+        current_directory = os.getcwd()
+        html_file_path = os.path.join(current_directory, "templates", "email_template.html")
+        css_file_path = os.path.join(current_directory, "templates", "style.css")
+        with open(html_file_path, "r", encoding="utf-8") as file:
                    
             html_content = file.read()
 
         # Read CSS file
-        with open("style.css", "r", encoding="utf-8") as file:
+        with open(css_file_path, "r", encoding="utf-8") as file:
             css_styles = file.read()
 
         # Embed CSS into HTML inside <style> tags

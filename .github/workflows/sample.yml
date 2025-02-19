@@ -1,26 +1,34 @@
+name: CI/CD Send Email
+
+on:
+  push:
+    branches:
+      - test-branch
+  pull_request:
+    branches:
+      - test-branch
+    types:
+      - closed
+  workflow_dispatch:
+
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
       - name: Send Adaptive Card Email
-        uses: your-org/adaptive-card-email-action@main
+        uses: nerazshakya/Send-Email-Notification@main
         with:
-          smtp_server: "smtp.office365.com"
-          smtp_port: '587'
-          smtp_username: "${{ secrets.SMTP_USERNAME }}"
-          smtp_password: "${{ secrets.SMTP_PASSWORD }}"
-          from_email: "your-email@example.com"
-          to_email: "recipient@example.com"
-          title: "Build Completed"
-          run_id: "5678"
-          commit: "def12345abcdef"
-          actor: "github-user"
-          current_time: "2025-02-18 12:00:00"
-          environ: "production"
-          app: "MyApp"
-          stage: "build"
-          event: "push"
-          branch: "main"
-          status: "success"
-          commit_message: "Initial commit"
+          github_token: ${{ secrets.GH_TOKEN }}
+          smtp_server: ${{ vars.SMTP_SERVER }}
+          smtp_port: ${{ vars.SMTP_PORT }}
+          smtp_username: ${{ secrets.SMTP_USERNAME }}
+          smtp_password: ${{ secrets.SMTP_PASSWORD }}
+          from_email: ${{ vars.SENDER_EMAIL }}
+          to_email: ${{ vars.RECEIVER_EMAIL }}
+          title: ${{github.repository}}
+          environ: 'DEV'
+          app: 'MY APP'
+          stage: 'Email'
+          status: ${{ job.status }}
+
 

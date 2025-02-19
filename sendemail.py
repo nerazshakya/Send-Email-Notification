@@ -190,20 +190,24 @@ def send_email():
         </html>
         """
 
-        # Create email message
-        msg = MIMEMultipart("alternative")
-        msg["From"] = FROM_EMAIL
-        msg["To"] = TO_EMAIL
+# Create email message
+        msg = MIMEMultipart("mixed")
+        msg["From"] = os.getenv("FROM_EMAIL")
+        msg["To"] = os.getenv("TO_EMAIL")
         msg["Subject"] = f"Workflow Status Notification: {status}"
 
-        # Attach HTML content
+        # Attach HTML content (fallback)
         msg.attach(MIMEText(email_html, "html"))
 
-        # Attach Adaptive Card as a separate MIME part for Outlook
+        # Attach Adaptive Card JSON as a separate MIME part for Outlook
         adaptive_card_part = MIMEText(adaptive_card_json, "json")
         adaptive_card_part.add_header("Content-Disposition", "attachment", filename="adaptive_card.json")
-        msg.attach(adaptive_card_part)
 
+        # Add the Actionable Message header for Outlook
+        msg.add_header('X-Message-Flags', 'ActionableMessage')
+        msg.add_header('X-Actionable-Message-Type', 'AdaptiveCard')
+        
+        msg.attach(adaptive_card_part)
         # Send email via SMTP
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()

@@ -176,6 +176,7 @@ def send_email():
                         }}
                     ]
                 }}
+            </script>
             <!-- Fallback for other email clients -->
             <p><b>For clients that do not support Adaptive Cards, here is the basic information:</b></p>
             <ul>
@@ -185,7 +186,7 @@ def send_email():
                 <li><b>Branch:</b> {branch}</li>
                 </ul>
             <p><a href="{repo_url}">Repository</a> | <a href="{build_url}">Workflow Status</a> | <a href="{commit_url}">Review Diffs</a></p>
-        </script>
+        
         </body>
         </html>
         """

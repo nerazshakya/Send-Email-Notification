@@ -38,14 +38,86 @@ def send_email():
 
         # Adaptive Card JSON directly in Python
         adaptive_card_json = f"""
-        {{
-            "type": "message",
-            "attachments": [{{
-                "contentType": "application/vnd.microsoft.card.adaptive",
-                "content": {{
+        {
                     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
                     "type": "AdaptiveCard",
-                    "version": "1.6",
+                    "version": "1.4",
+                    "body": [
+                        {{
+                            "type": "Container",
+                            "items": [
+                                {{
+                                    "type": "TextBlock",
+                                    "size": "medium",
+                                    "weight": "bolder",
+                                    "text": "{title}",
+                                    "spacing": "none"
+                                }},
+                                {{
+                                    "type": "TextBlock",
+                                    "size": "small",
+                                    "weight": "bolder",
+                                    "text": "RUN ID #{run_id} (Commit {commit})",
+                                    "spacing": "none"
+                                }},
+                                {{
+                                    "type": "TextBlock",
+                                    "size": "small",
+                                    "weight": "bolder",
+                                    "text": "By @{actor} on {current_time}",
+                                    "spacing": "none"
+                                }},
+                                {{
+                                    "type": "FactSet",
+                                    "separator": true,
+                                    "spacing": "Padding",
+                                    "facts": [
+                                        {{"title": "Environment", "value": "{environ.upper()}"}},
+                                        {{"title": "Application", "value": "{app.upper()}"}},
+                                        {{"title": "Stage", "value": "{stage.upper()}"}},
+                                        {{"title": "Event Type", "value": "{event.upper()}"}},
+                                        {{"title": "Branch", "value": "{branch}"}},
+                                        {{"title": "Status", "value": "{status.upper()}"}},
+                                        {{"title": "Commit Message", "value": "{commit_message}"}}
+                                    ]
+                                }}
+                            ]
+                        }},
+                        {{
+                            "type": "Container",
+                            "items": [
+                                {{
+                                    "type": "ActionSet",
+                                    "actions": [
+                                        {{"type": "Action.OpenUrl", "title": "Repository", "style": "positive", "url": "{repo_url}"}},
+                                        {{"type": "Action.OpenUrl", "title": "Workflow Status", "style": "positive", "url": "{build_url}"}},
+                                        {{"type": "Action.OpenUrl", "title": "Review Diffs", "style": "positive", "url": "{commit_url}"}}
+                                    ]
+                                }}
+                            ]
+                        }}
+                    ]
+                }
+        """
+
+        # Email configuration
+        SMTP_SERVER = os.getenv("SMTP_SERVER")
+        SMTP_PORT = int(os.getenv("SMTP_PORT", 25))
+        SMTP_USERNAME = os.getenv("SMTP_USERNAME")
+        SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+        FROM_EMAIL = os.getenv("FROM_EMAIL")
+        TO_EMAIL = os.getenv("TO_EMAIL")
+
+        email_html = f"""
+        <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        </head>
+        <body>
+        {{
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.4",
                     "body": [
                         {{
                             "type": "Container",
@@ -102,30 +174,14 @@ def send_email():
                         }}
                     ]
                 }}
-            }}]
-        }}
-        """
-
-        # Email configuration
-        SMTP_SERVER = os.getenv("SMTP_SERVER")
-        SMTP_PORT = int(os.getenv("SMTP_PORT", 25))
-        SMTP_USERNAME = os.getenv("SMTP_USERNAME")
-        SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-        FROM_EMAIL = os.getenv("FROM_EMAIL")
-        TO_EMAIL = os.getenv("TO_EMAIL")
-
-        email_html = f"""
-        <html>
-        <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        </head>
-        <body>
-            <h3>Workflow Status Notification</h3>
-            <p>Your CI/CD pipeline has completed successfully!</p>
-            <p><b>Note:</b> This email contains an Adaptive Card. Please view it in Outlook.</p>
-            <p><b>Title:</b> {title}</p>
-            <p><b>Status:</b> {status}</p>
-            <p><b>Commit:</b> {commit} - {commit_message}</p>
+            <!-- Fallback for other email clients -->
+            <p><b>For clients that do not support Adaptive Cards, here is the basic information:</b></p>
+            <ul>
+                <li><b>Title:</b> {title}</li>
+                <li><b>Status:</b> {status}</li>
+                <li><b>Commit:</b> {commit}</li>
+                <li><b>Branch:</b> {branch}</li>
+                </ul>
             <p><a href="{repo_url}">Repository</a> | <a href="{build_url}">Workflow Status</a> | <a href="{commit_url}">Review Diffs</a></p>
         </body>
         </html>

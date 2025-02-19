@@ -114,8 +114,8 @@ def send_email():
         """
         
         current_directory = os.getcwd()
-        html_file_path = os.path.join(current_directory, "templates", "email_template.html")
-        css_file_path = os.path.join(current_directory, "templates", "style.css")
+        html_file_path = os.path.join(current_directory, "email_template.html")
+        css_file_path = os.path.join(current_directory, "style.css")
         with open(html_file_path, "r", encoding="utf-8") as file:
                    
             html_content = file.read()

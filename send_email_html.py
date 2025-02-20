@@ -83,19 +83,16 @@ def send_email():
         #html_content = html_content.replace("<!-- INLINE_CSS -->", f"<style>{css_styles}</style>")
         final_html = rendered_html
         
-        # Handle multiple emails in TO_EMAIL
+        # Handle multiple emails in TO_EMAIL (comma or semicolon separated)
         to_emails = [email.strip() for email in TO_EMAIL.replace(';', ',').split(',')]
         #to_emails_str = ", ".join(to_emails)
             # Create email message
         msg = MIMEMultipart("alternative")
         msg["From"] = FROM_EMAIL
-        msg["To"] = to_emails
+        msg["To"] = ", ".join(to_emails)
         msg["Subject"] = f"Workflow Status Notification: {status}"
 
         # Attach HTML content
-    
-    
-            
         msg.attach(MIMEText(final_html, "html"))      
 
 

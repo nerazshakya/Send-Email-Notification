@@ -83,11 +83,13 @@ def send_email():
         #html_content = html_content.replace("<!-- INLINE_CSS -->", f"<style>{css_styles}</style>")
         final_html = rendered_html
         
-
+        # Handle multiple emails in TO_EMAIL
+        to_emails = [email.strip() for email in TO_EMAIL.replace(';', ',').split(',')]
+        #to_emails_str = ", ".join(to_emails)
             # Create email message
         msg = MIMEMultipart("alternative")
         msg["From"] = FROM_EMAIL
-        msg["To"] = TO_EMAIL
+        msg["To"] = to_emails
         msg["Subject"] = f"Workflow Status Notification: {status}"
 
         # Attach HTML content
@@ -102,7 +104,7 @@ def send_email():
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(SMTP_USERNAME, SMTP_PASSWORD)
-            server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
+            server.sendmail(FROM_EMAIL, to_emails, msg.as_string())
             server.quit()
 
         print("✅ Email with Adaptive Card sent successfully!")

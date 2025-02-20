@@ -5,6 +5,7 @@ import pytz
 import subprocess
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from jinja2 import Template
 
 # Get local time
 local_timezone = datetime.datetime.now().astimezone().tzinfo
@@ -75,6 +76,10 @@ def send_email():
             html_content = file.read()
         with open(css_file_path, "r", encoding="utf-8") as file:
             css_styles = file.read()
+            
+                # Render the HTML with Jinja2
+        template = Template(html_content)
+        rendered_html = template.render(email_variables)
 
         # Embed CSS into HTML inside <style> tags
         #html_content = html_content.replace("<!-- INLINE_CSS -->", f"<style>{css_styles}</style>")

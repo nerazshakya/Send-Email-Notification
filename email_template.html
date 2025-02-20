@@ -92,7 +92,7 @@
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tbody>
                             <tr>
-                                <td> <a href="http://htmlemail.io" target="_blank">Repository</a> </td>
+                                <td> <a href={repo_url} target="_blank">Repository</a> </td>
                             </tr>
                             </tbody>
                         </table>
@@ -101,7 +101,12 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tbody>
                                 <tr>
-                                <td> <a href="http://htmlemail.io" target="_blank">Workflow Status</a> </td>
+                                <td style="border-radius: 4px; background-color: #0867ec;"> 
+                                    <a href={build_url} target="_blank"
+                                        style="display: inline-block; padding: 12px 24px; background-color: #0867ec; color: #ffffff; border: 2px solid #0867ec; border-radius: 4px; font-size: 16px; font-weight: bold; text-decoration: none; text-transform: capitalize;">
+                                        Workflow Status
+                                    </a> 
+                                </td>
                                 </tr>
                             </tbody>
                             </table>
@@ -110,7 +115,7 @@
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tbody>
                                 <tr>
-                                <td> <a href="http://htmlemail.io" target="_blank">Reveiw Diffs</a> </td>
+                                <td> <a href={commit_url} target="_blank">Reveiw Diffs</a> </td>
                                 </tr>
                             </tbody>
                             </table>

@@ -1,11 +1,8 @@
+
 {
-    "type": "message",
-    "attachments": [{
-        "contentType": "application/vnd.microsoft.card.adaptive",
-        "content": {
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
             "type": "AdaptiveCard",
-            "version": "1.6",
+            "version": "1.4",
             "body": [
                 {
                     "type": "Container",
@@ -14,21 +11,21 @@
                             "type": "TextBlock",
                             "size": "medium",
                             "weight": "bolder",
-                            "text": "{TITLE}",
+                            "text": "{title}",
                             "spacing": "none"
                         },
                         {
                             "type": "TextBlock",
                             "size": "small",
                             "weight": "bolder",
-                            "text": "RUN ID #{RUN_ID} (Commit {COMMIT})",
+                            "text": "RUN ID #{run_id} (Commit {commit})",
                             "spacing": "none"
                         },
                         {
                             "type": "TextBlock",
                             "size": "small",
                             "weight": "bolder",
-                            "text": "By @{ACTOR} on {CURRENT_TIME}",
+                            "text": "By @{actor} on {current_time}",
                             "spacing": "none"
                         },
                         {
@@ -36,13 +33,13 @@
                             "separator": true,
                             "spacing": "Padding",
                             "facts": [
-                                {"title": "Environment", "value": "{ENVIRON}"},
-                                {"title": "Application", "value": "{APP}"},
-                                {"title": "Stage", "value": "{STAGE}"},
-                                {"title": "Event Type", "value": "{EVENT}"},
-                                {"title": "Branch", "value": "{BRANCH}"},
-                                {"title": "Status", "value": "{STATUS}"},
-                                {"title": "Commit Message", "value": "{COMMIT_MESSAGE}"}
+                                {"title": "Environment", "value": "{environ.upper()}"},
+                                {"title": "Application", "value": "{app.upper()}"},
+                                {"title": "Stage", "value": "{stage.upper()}"},
+                                {"title": "Event Type", "value": "{event.upper()}"},
+                                {"title": "Branch", "value": "{branch}"},
+                                {"title": "Status", "value": "{status.upper()}"},
+                                {"title": "Commit Message", "value": "{commit_message}"}
                             ]
                         }
                     ]
@@ -53,14 +50,12 @@
                         {
                             "type": "ActionSet",
                             "actions": [
-                                {"type": "Action.OpenUrl", "title": "Repository", "style": "positive", "url": "{REPO_URL}"},
-                                {"type": "Action.OpenUrl", "title": "Workflow Status", "style": "positive", "url": "{BUILD_URL}"},
-                                {"type": "Action.OpenUrl", "title": "Review Diffs", "style": "positive", "url": "{COMMIT_URL}"}
+                                {"type": "Action.OpenUrl", "title": "Repository", "style": "positive", "url": "{repo_url}"},
+                                {"type": "Action.OpenUrl", "title": "Workflow Status", "style": "positive", "url": "{build_url}"},
+                                {"type": "Action.OpenUrl", "title": "Review Diffs", "style": "positive", "url": "{commit_url}"}
                             ]
                         }
                     ]
                 }
             ]
         }
-    }]
-}

@@ -20,43 +20,36 @@ def get_commit_message():
 def send_email():
     try:
         # Load input parameters from environment variables
-        #title = os.getenv("INPUT_TITLE", "Workflow Notification")
+        title = os.getenv("INPUT_TITLE", "Workflow Notification")
         status = os.getenv("INPUT_STATUS", "Unknown")
-        #commit = os.getenv("GITHUB_SHA", "Unknown")[:7]  # Short commit hash
-        #actor = os.getenv("GITHUB_ACTOR", "Unknown User")
-        #event = os.getenv("GITHUB_EVENT_NAME", "Unknown Event")
-        #repo = os.getenv("GITHUB_REPOSITORY", "Unknown Repo")
-        #branch = os.getenv("GITHUB_REF_NAME", "Unknown Branch")
-        #commit_message = get_commit_message()
-        #run_id = os.getenv("GITHUB_RUN_ID", "Unknown Run ID")
-        #github_url = os.getenv("GITHUB_SERVER_URL", "https://github.com")
-        #environ = os.getenv("INPUT_ENVIRON", "N/A")
-        #stage = os.getenv("INPUT_STAGE", "N/A")
-        #app = os.getenv("INPUT_APP", "N/A")
+        commit = os.getenv("GITHUB_SHA", "Unknown")[:7]  # Short commit hash
+        actor = os.getenv("GITHUB_ACTOR", "Unknown User")
+        event = os.getenv("GITHUB_EVENT_NAME", "Unknown Event")
+        repo = os.getenv("GITHUB_REPOSITORY", "Unknown Repo")
+        branch = os.getenv("GITHUB_REF_NAME", "Unknown Branch")
+        commit_message = get_commit_message()
+        run_id = os.getenv("GITHUB_RUN_ID", "Unknown Run ID")
+        github_url = os.getenv("GITHUB_SERVER_URL", "https://github.com")
+        environ = os.getenv("INPUT_ENVIRON", "N/A")
+        stage = os.getenv("INPUT_STAGE", "N/A")
+        app = os.getenv("INPUT_APP", "N/A")
 
-        #repo_url = f"{github_url}/{repo}/tree/{branch}"
-        #commit_url = f"{github_url}/{repo}/commit/{commit}"
-        #build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
+        repo_url = f"{github_url}/{repo}/tree/{branch}"
+        commit_url = f"{github_url}/{repo}/commit/{commit}"
+        build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
         
-        email_variables = { 
-            "title": os.getenv("INPUT_TITLE", "Workflow Notification"),
-            "status": os.getenv("INPUT_STATUS", "Unknown"),
-            "commit": os.getenv("GITHUB_SHA", "Unknown")[:7],  # Short commit hash
-            "actor": os.getenv("GITHUB_ACTOR", "Unknown User"),
-            "event": os.getenv("GITHUB_EVENT_NAME", "Unknown Event"),
-            "repo": os.getenv("GITHUB_REPOSITORY", "Unknown Repo"),
-            "branch": os.getenv("GITHUB_REF_NAME", "Unknown Branch"),
-            "commit_message": get_commit_message(),
-            "run_id": os.getenv("GITHUB_RUN_ID", "Unknown Run ID"),
-            "github_url": os.getenv("GITHUB_SERVER_URL", "https://github.com"),
-            "environ": os.getenv("INPUT_ENVIRON", "N/A"),
-            "stage": os.getenv("INPUT_STAGE", "N/A"),
-            "app": os.getenv("INPUT_APP", "N/A"),
-
-            # Construct URLs using variables
-            "repo_url": f"{os.getenv('GITHUB_SERVER_URL', 'https://github.com')}/{os.getenv('GITHUB_REPOSITORY', 'Unknown Repo')}/tree/{os.getenv('GITHUB_REF_NAME', 'Unknown Branch')}",
-            "commit_url": f"{os.getenv('GITHUB_SERVER_URL', 'https://github.com')}/{os.getenv('GITHUB_REPOSITORY', 'Unknown Repo')}/commit/{os.getenv('GITHUB_SHA', 'Unknown')[:7]}",
-            "build_url": f"{os.getenv('GITHUB_SERVER_URL', 'https://github.com')}/{os.getenv('GITHUB_REPOSITORY', 'Unknown Repo')}/actions/runs/{os.getenv('GITHUB_RUN_ID', 'Unknown Run ID')}"
+        email_variables = {
+            "title": title,
+            "status": status,
+            "commit": commit,
+            "actor": actor,
+            "event": event,
+            "repo": repo,
+            "branch": branch,
+            "commit_message": commit_message,
+            "repo_url": repo_url,
+            "commit_url": commit_url,
+            "build_url": build_url
         }
 
 

@@ -79,7 +79,7 @@ def send_email():
 
         # Embed CSS into HTML inside <style> tags
         #html_content = html_content.replace("<!-- INLINE_CSS -->", f"<style>{css_styles}</style>")
-        final_html = f"<html><head><style>{css_styles}</style></head>{rendered_html}</html>"
+        final_html = rendered_html
         
 
             # Create email message

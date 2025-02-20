@@ -1,14 +1,16 @@
 import smtplib
-import json
-import pytz
-import datetime
-import subprocess
 import os
+import datetime
+import pytz
+import subprocess
+import urllib.parse
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-local_timezone = datetime.datetime.now().astimezone().tzinfo
+from email.mime.image import MIMEImage
+from jinja2 import Template
 
-# Format time for display
+# Get local time
+local_timezone = datetime.datetime.now().astimezone().tzinfo
 current_time = datetime.datetime.now(local_timezone).strftime('%Y-%m-%d %H:%M:%S %Z')
 
 def get_commit_message():
@@ -17,68 +19,49 @@ def get_commit_message():
     except subprocess.CalledProcessError:
         return "No commit message available"
 
-def get_files_changed():
-    try:
-        return subprocess.check_output(['git', 'diff-tree', '--no-commit-id', '--name-only', '-r', 'HEAD']).decode('utf-8').strip().split("\n")
-    except subprocess.CalledProcessError:
-        return "No files changed"
-
 def send_email():
-    
     try:
         # Load input parameters from environment variables
         title = os.getenv("INPUT_TITLE", "Workflow Notification")
-        status = os.getenv('INPUT_STATUS', 'Unknown')   # Expected: Success, Failure, Skipped, etc.
-        commit = os.getenv('GITHUB_SHA', 'Unknown')[:7]  # Short commit hash
-        actor = os.getenv('GITHUB_ACTOR', 'Unknown User')
-        event = os.getenv('GITHUB_EVENT_NAME', 'Unknown Event')
-        repo = os.getenv('GITHUB_REPOSITORY', 'Unknown Repo')
-        branch = os.getenv('GITHUB_REF_NAME', 'Unknown Branch')
+        status = os.getenv("INPUT_STATUS", "Unknown")
+        commit = os.getenv("GITHUB_SHA", "Unknown")[:7]  # Short commit hash
+        actor = os.getenv("GITHUB_ACTOR", "Unknown User")
+        event = os.getenv("GITHUB_EVENT_NAME", "Unknown Event")
+        repo = os.getenv("GITHUB_REPOSITORY", "Unknown Repo")
+        branch = os.getenv("GITHUB_REF_NAME", "Unknown Branch")
         commit_message = get_commit_message()
-        run_id = os.getenv('GITHUB_RUN_ID', '')
-        files_changed = get_files_changed()
-        github_url = os.getenv('GITHUB_SERVER_URL','https://github.com')
-        environ = os.getenv('INPUT_ENVIRON')
-        stage = os.getenv('INPUT_STAGE')
-        app = os.getenv('INPUT_APP')
+        run_id = os.getenv("GITHUB_RUN_ID", "Unknown Run ID")
+        github_url = os.getenv("GITHUB_SERVER_URL", "https://github.com")
+        environ = os.getenv("INPUT_ENVIRON", "N/A")
+        stage = os.getenv("INPUT_STAGE", "N/A")
+        app = os.getenv("INPUT_APP", "N/A")
 
-        repo_url = f"{github_url}/{repo}/tree/{branch}"
-        commit_url = f"{github_url}/{repo}/commit/{commit}"
-        build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
+        repo_url = urllib.parse.quote(f"{github_url}/{repo}/tree/{branch}", safe=':/?=')
+        commit_url = urllib.parse.quote(f"{github_url}/{repo}/commit/{commit}", safe=':/?=')
+        build_url = urllib.parse.quote(f"{github_url}/{repo}/actions/runs/{run_id}", safe=':/?=')
+        #f"{github_url}/{repo}/tree/{branch}"
+        #commit_url = f"{github_url}/{repo}/commit/{commit}"
+        #build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
+        
+        email_variables = {
+            "current_time": current_time,
+            "title": title,
+            "status": status,
+            "commit": commit,
+            "actor": actor,
+            "event": event,
+            "repo": repo,
+            "branch": branch,
+            "environ": environ,
+            "stage": stage,
+            "app": app,
+            "commit_message": commit_message,
+            "run_id": run_id,
+            "repo_url": repo_url,
+            "commit_url": commit_url,
+            "build_url": build_url
+        }
 
-
-
-# Get the absolute path of the script directory
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(script_dir, "adaptive_card.json")
-
-            # Load Adaptive Card template
-        with open(file_path, "r") as file:
-            adaptive_card_template = file.read()
-
-        # Load Adaptive Card template from the repo
-        #with open("adaptive_card.json", "r") as file:
-        #    adaptive_card_template = file.read()
-
-        # Replace placeholders with dynamic values
-        adaptive_card_json = (
-            adaptive_card_template
-            .replace("{TITLE}", title)
-            .replace("{RUN_ID}", run_id)
-            .replace("{COMMIT}", commit)
-            .replace("{ACTOR}", actor)
-            .replace("{CURRENT_TIME}", current_time)
-            .replace("{ENVIRON}", environ)
-            .replace("{APP}", app)
-            .replace("{STAGE}", stage)
-            .replace("{EVENT}", event)
-            .replace("{BRANCH}", branch)
-            .replace("{STATUS}", status)
-            .replace("{COMMIT_MESSAGE}", commit_message)
-            .replace("{REPO_URL}", repo_url)
-            .replace("{BUILD_URL}", build_url)
-            .replace("{COMMIT_URL}", commit_url)
-        )
 
         # Email configuration
         SMTP_SERVER = os.getenv("SMTP_SERVER")
@@ -87,41 +70,53 @@ def send_email():
         SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
         FROM_EMAIL = os.getenv("FROM_EMAIL")
         TO_EMAIL = os.getenv("TO_EMAIL")
+        
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        html_file_path = os.path.join(script_dir, "templates", "email_template.html")
+        css_file_path = os.path.join(script_dir, "templates", "style.css")
+        github_icon_path = os.path.join(script_dir, "github.png") 
+        
+        with open(html_file_path, "r", encoding="utf-8") as file:
+            html_content = file.read()
+        with open(css_file_path, "r", encoding="utf-8") as file:
+            css_styles = file.read()
+        with open(github_icon_path, "rb") as img_file:
+            img_data = img_file.read()
+            image = MIMEImage(img_data, name="github.png")
+            image.add_header("Content-ID", "<github_logo>")
+            msg.attach(image)
+            
+                # Render the HTML with Jinja2
+        template = Template(html_content)
+        rendered_html = template.render(email_variables)
 
-        adaptive_card_script = f"""
-        <script type="application/adaptivecard+json">
-        {adaptive_card_json}
-        </script>
-        """
-        email_html = f"""
-        <html>
-        <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-            {adaptive_card_script}
-        </head>
-        <body>
-            <h3>Workflow Status Notification</h3>
-            <p>Your CI/CD pipeline has completed successfully!</p>
-            <p><b>Note:</b> This email contains an Adaptive Card. Please view it in Outlook.</p>
-        </body>
-        </html>
-        """
-
-        # Create email message
-        msg = MIMEMultipart()
+        # Embed CSS into HTML inside <style> tags
+        #html_content = html_content.replace("<!-- INLINE_CSS -->", f"<style>{css_styles}</style>")
+        final_html = rendered_html
+        
+        # Handle multiple emails in TO_EMAIL (comma or semicolon separated)
+        to_emails = [email.strip() for email in TO_EMAIL.replace(';', ',').split(',')]
+        #to_emails_str = ", ".join(to_emails)
+            # Create email message
+        msg = MIMEMultipart("alternative")
         msg["From"] = FROM_EMAIL
-        msg["To"] = TO_EMAIL
-        msg["Subject"] = "Workflow Status Notification"
-        msg.attach(MIMEText(email_html, "html"))
+        msg["To"] = ", ".join(to_emails)
+        msg["Subject"] = f"GitHub workflow status: {status}"
+
+        # Attach HTML content
+        msg.attach(MIMEText(final_html, "html"))      
+
+
 
         # Send email via SMTP
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USERNAME, SMTP_PASSWORD)
-        server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
-        server.quit()
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
+            server.sendmail(FROM_EMAIL, to_emails, msg.as_string())
+            server.quit()
 
         print("✅ Email with Adaptive Card sent successfully!")
+    
     except Exception as e:
         print(f"❌ Error sending email: {e}")
         exit(1)

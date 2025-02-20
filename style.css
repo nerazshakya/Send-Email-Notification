@@ -1,6 +1,6 @@
     
     body {
-        font-family: Helvetica, sans-serif;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         -webkit-font-smoothing: antialiased;
         font-size: 16px;
         line-height: 1.3;
@@ -16,7 +16,7 @@
     }
     
     table td {
-        font-family: Helvetica, sans-serif;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         font-size: 16px;
         vertical-align: top;
     }
@@ -78,7 +78,7 @@
     }
     
     p {
-        font-family: Helvetica, sans-serif;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         font-size: 16px;
         font-weight: normal;
         margin: 0;

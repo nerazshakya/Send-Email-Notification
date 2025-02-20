@@ -80,11 +80,7 @@ def send_email():
             html_content = file.read()
         with open(css_file_path, "r", encoding="utf-8") as file:
             css_styles = file.read()
-        with open(github_icon_path, "rb") as img_file:
-            img_data = img_file.read()
-            image = MIMEImage(img_data, name="github.png")
-            image.add_header("Content-ID", "<github_logo>")
-            msg.attach(image)
+
             
                 # Render the HTML with Jinja2
         template = Template(html_content)
@@ -103,7 +99,12 @@ def send_email():
         msg["To"] = ", ".join(to_emails)
         msg["Subject"] = f"GitHub workflow status: {status}"
 
-        # Attach HTML content
+        with open(github_icon_path, "rb") as img_file:
+            img_data = img_file.read()
+            image = MIMEImage(img_data, name="github.png")
+            image.add_header("Content-ID", "<github_logo>")
+            msg.attach(image)
+            # Attach HTML content
         msg.attach(MIMEText(final_html, "html"))      
 
 

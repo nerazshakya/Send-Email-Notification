@@ -19,6 +19,9 @@
         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         font-size: 16px;
         vertical-align: top;
+        text-align: left;
+        white-space: nowrap; 
+        padding-right: 10px;
     }
 
     
@@ -240,13 +243,6 @@
         font-size: 16px !important;
         max-width: 100% !important;
         width: 100% !important;
-        }
-
-    td {
-        vertical-align: top; 
-        text-align: left;
-        white-space: nowrap; 
-        padding-right: 10px;
         }
     }
     

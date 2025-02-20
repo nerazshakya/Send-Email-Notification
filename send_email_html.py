@@ -51,6 +51,7 @@ def send_email():
             "stage": stage,
             "app": app,
             "commit_message": commit_message,
+            "run_id": run_id,
             "repo_url": repo_url,
             "commit_url": commit_url,
             "build_url": build_url

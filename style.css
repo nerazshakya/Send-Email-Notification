@@ -243,7 +243,10 @@
         }
 
     td {
-        padding: 0 10px 0 0;
+        vertical-align: top; 
+        text-align: left;
+        white-space: nowrap; 
+        padding-right: 10px;
         }
     }
     

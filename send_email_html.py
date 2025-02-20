@@ -3,6 +3,7 @@ import os
 import datetime
 import pytz
 import subprocess
+import urllib.parse
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from jinja2 import Template
@@ -34,9 +35,12 @@ def send_email():
         stage = os.getenv("INPUT_STAGE", "N/A")
         app = os.getenv("INPUT_APP", "N/A")
 
-        repo_url = f"{github_url}/{repo}/tree/{branch}"
-        commit_url = f"{github_url}/{repo}/commit/{commit}"
-        build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
+        repo_url = urllib.parse.quote(f"{github_url}/{repo}/tree/{branch}", safe=':/')
+        commit_url = urllib.parse.quote(f"{github_url}/{repo}/commit/{commit}", safe=':/')
+        build_url = urllib.parse.quote(f"{github_url}/{repo}/actions/runs/{run_id}", safe=':/')
+        #f"{github_url}/{repo}/tree/{branch}"
+        #commit_url = f"{github_url}/{repo}/commit/{commit}"
+        #build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
         
         email_variables = {
             "current_time": current_time,

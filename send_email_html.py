@@ -67,7 +67,7 @@ def send_email():
         TO_EMAIL = os.getenv("TO_EMAIL")
         
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        html_file_path = os.path.join(script_dir, "email_template.html")
+        html_file_path = os.path.join(script_dir, "new_email_template.html")
         css_file_path = os.path.join(script_dir, "style.css")
         
         with open(html_file_path, "r", encoding="utf-8") as file:

@@ -39,6 +39,7 @@ def send_email():
         build_url = f"{github_url}/{repo}/actions/runs/{run_id}"
         
         email_variables = {
+            "current_time": current_time,
             "title": title,
             "status": status,
             "commit": commit,

@@ -74,7 +74,7 @@ def send_email():
         script_dir = os.path.dirname(os.path.realpath(__file__))
         html_file_path = os.path.join(script_dir, "templates", "email_template.html")
         css_file_path = os.path.join(script_dir, "templates", "style.css")
-        github_icon_path = os.path.join(script_dir, "github.png") 
+        github_icon_path = os.path.join(script_dir, "icons", "github.png") 
         
         with open(html_file_path, "r", encoding="utf-8") as file:
             html_content = file.read()

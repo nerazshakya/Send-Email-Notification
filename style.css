@@ -94,6 +94,7 @@
         box-sizing: border-box;
         min-width: 100% !important;
         width: 100%;
+        display: block;
     }
     
     .btn > tbody > tr > td {
@@ -108,20 +109,18 @@
         background-color: #ffffff;
         border-radius: 4px;
         text-align: center;
+        padding: 0;
     }
     
     .btn a {
-        background-color: #ffffff;
-        border: solid 2px #0867ec;
-        border-radius: 4px;
-        box-sizing: border-box;
-        color: #0867ec;
-        cursor: pointer;
         display: inline-block;
+        padding: 12px 24px;
+        background-color: #0867ec;
+        color: #ffffff;
+        border: 2px solid #0867ec;
+        border-radius: 4px;
         font-size: 16px;
         font-weight: bold;
-        margin: 0;
-        padding: 12px 24px;
         text-decoration: none;
         text-transform: capitalize;
     }
@@ -144,6 +143,17 @@
         background-color: #04953e !important;
         border-color: #04953e !important;
     }
+    }
+    @media only screen and (max-width: 640px) {
+        .btn {
+            width: 100% !important; /* Full width on small screens */
+            text-align: center;
+        }
+    
+        .btn a {
+            width: 100% !important; /* Full width for links on small screens */
+            padding: 12px !important; /* Adjust padding on smaller screens */
+        }
     }
         
     .last {

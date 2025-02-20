@@ -74,7 +74,7 @@ def send_email():
         script_dir = os.path.dirname(os.path.realpath(__file__))
         html_file_path = os.path.join(script_dir, "templates", "email_template.html")
         css_file_path = os.path.join(script_dir, "templates", "style.css")
-        github_icon_path = os.path.join(script_dir, "icons", "github.png") 
+        
         
         with open(html_file_path, "r", encoding="utf-8") as file:
             html_content = file.read()
@@ -99,11 +99,6 @@ def send_email():
         msg["To"] = ", ".join(to_emails)
         msg["Subject"] = f"GitHub workflow status: {status}"
 
-        with open(github_icon_path, "rb") as img_file:
-            img_data = img_file.read()
-            image = MIMEImage(img_data, name="github.png")
-            image.add_header("Content-ID", "<github_logo>")
-            msg.attach(image)
             # Attach HTML content
         msg.attach(MIMEText(final_html, "html"))      
 

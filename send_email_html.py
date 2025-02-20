@@ -35,9 +35,9 @@ def send_email():
         stage = os.getenv("INPUT_STAGE", "N/A")
         app = os.getenv("INPUT_APP", "N/A")
 
-        repo_url = urllib.parse.quote(f"{github_url}/{repo}/tree/{branch}", safe=':/')
-        commit_url = urllib.parse.quote(f"{github_url}/{repo}/commit/{commit}", safe=':/')
-        build_url = urllib.parse.quote(f"{github_url}/{repo}/actions/runs/{run_id}", safe=':/')
+        repo_url = urllib.parse.quote(f"{github_url}/{repo}/tree/{branch}", safe=':/?=')
+        commit_url = urllib.parse.quote(f"{github_url}/{repo}/commit/{commit}", safe=':/?=')
+        build_url = urllib.parse.quote(f"{github_url}/{repo}/actions/runs/{run_id}", safe=':/?=')
         #f"{github_url}/{repo}/tree/{branch}"
         #commit_url = f"{github_url}/{repo}/commit/{commit}"
         #build_url = f"{github_url}/{repo}/actions/runs/{run_id}"

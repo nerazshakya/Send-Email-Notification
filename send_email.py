@@ -93,9 +93,10 @@ def send_email():
         final_html = rendered_html
         
         # Handle multiple emails in TO_EMAIL (comma or semicolon separated)
-        to_emails = [email.strip() for email in TO_EMAIL.replace(';', ',').replace(' ', '').split(',')]
-        cc_emails = [email.strip() for email in CC_EMAIL.replace(';', ',').replace(' ', '').split(',')]
-        bcc_emails = [email.strip() for email in BCC_EMAIL.replace(';', ',').replace(' ', '').split(',')]
+        to_emails = [email.strip() for email in (TO_EMAIL or '').replace(';', ',').split(',')] if TO_EMAIL else []
+        cc_emails = [email.strip() for email in (CC_EMAIL or '').replace(';', ',').split(',')] if CC_EMAIL else []
+        bcc_emails = [email.strip() for email in (BCC_EMAIL or '').replace(';', ',').split(',')] if BCC_EMAIL else []
+
 
         #to_emails_str = ", ".join(to_emails)
             # Create email message
@@ -109,7 +110,7 @@ def send_email():
             # Attach HTML content
         msg.attach(MIMEText(final_html, "html")) 
         
-        all_recipients = to_emails + (cc_emails if cc_emails else []) + (bcc_emails if bcc_emails else [])   
+        all_recipients = to_emails + cc_emails + bcc_emails  
 
 
 

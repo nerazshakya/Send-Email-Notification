@@ -72,8 +72,8 @@ runs:
         SMTP_PASSWORD: ${{ inputs.smtp_password }}
         FROM_EMAIL: ${{ inputs.from_email }}
         TO_EMAIL: ${{ inputs.to_email }}
-        CC_EMAIL: ${{ inputs.to_email }}
-        BCC_EMAIL: ${{ inputs.to_email }}
+        CC_EMAIL: ${{ inputs.cc_email }}
+        BCC_EMAIL: ${{ inputs.bcc_email }}
         INPUT_GITHUB_TOKEN: ${{inputs.github_token}}
         INPUT_TITLE: ${{ inputs.title }}
         INPUT_STATUS: ${{ inputs.status }}

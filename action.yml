@@ -27,6 +27,12 @@ inputs:
   to_email:
     description: "Recipient email address"
     required: true
+  cc_email:
+    description: "Recipient email address"
+    required: false
+  bcc_email:
+    description: "Recipient email address"
+    required: false
 
   title:
     description: 'Notification Title'

@@ -70,6 +70,8 @@ def send_email():
         SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
         FROM_EMAIL = os.getenv("FROM_EMAIL")
         TO_EMAIL = os.getenv("TO_EMAIL")
+        CC_EMAIL = os.getenv("CC_EMAIL")
+        BCC_EMAIL = os.getenv("BCC_EMAIL")
         
         script_dir = os.path.dirname(os.path.realpath(__file__))
         html_file_path = os.path.join(script_dir, "templates", "email_template.html")
@@ -91,16 +93,23 @@ def send_email():
         final_html = rendered_html
         
         # Handle multiple emails in TO_EMAIL (comma or semicolon separated)
-        to_emails = [email.strip() for email in TO_EMAIL.replace(';', ',').split(',')]
+        to_emails = [email.strip() for email in TO_EMAIL.replace(';', ',').replace(' ', '').split(',')]
+        cc_emails = [email.strip() for email in CC_EMAIL.replace(';', ',').replace(' ', '').split(',')]
+        bcc_emails = [email.strip() for email in BCC_EMAIL.replace(';', ',').replace(' ', '').split(',')]
+
         #to_emails_str = ", ".join(to_emails)
             # Create email message
         msg = MIMEMultipart("alternative")
         msg["From"] = FROM_EMAIL
         msg["To"] = ", ".join(to_emails)
+        msg["CC"] = ", ".join(cc_emails)
+        msg["BCC"] = ", ".join(bcc_emails)
         msg["Subject"] = f"GitHub workflow status: {status}"
 
             # Attach HTML content
-        msg.attach(MIMEText(final_html, "html"))      
+        msg.attach(MIMEText(final_html, "html")) 
+        
+        all_recipients = to_emails + (cc_emails if cc_emails else []) + (bcc_emails if bcc_emails else [])   
 
 
 
@@ -108,7 +117,7 @@ def send_email():
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(SMTP_USERNAME, SMTP_PASSWORD)
-            server.sendmail(FROM_EMAIL, to_emails, msg.as_string())
+            server.sendmail(FROM_EMAIL, all_recipients, msg.as_string())
             server.quit()
 
         print("✅ Email with Adaptive Card sent successfully!")
